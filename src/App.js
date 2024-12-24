@@ -50,11 +50,11 @@ const App=()=>{
   console.log(msg);
   const [hide,sethide]=useState(true);
   return(  <Provider store={store}>
-  <div className={` flex w-[100%] relative h-[100vh] bg-[rgba(255,255,255,.3)] ${states==0?"lg:!overflow-hidden":""}  flex flex-col `}>
+  <div className={` flex w-[100%] relative h-[100vh] bg-[rgba(255,255,255,.3)] ${states==0?"":""}  flex flex-col pb-[30px]`}>
     <Header  states={states} setstates={setstates} />
    {notify? <p className="bg-[lightgreen] px-3py-2">{notify}</p>:null}
     <WebSocketDemo states={states} setstates={setstates}  />
-    <div className={` bg-[rgba(0,0,0,.05)] w-[100%] ${states==0?"h-[90%]":"h-[auto]"} flex lg:flex-row flex-col justify-start items-start px-[40px] `}>
+    <div className={` bg-[rgba(0,0,0,.05)] w-[100%] ${states==0?"h-[auto]":"h-[auto]"} flex lg:flex-row flex-col justify-start items-start px-[40px] `}>
      {states==0?  <PlaceOrder  dataupdate={dataupdate} setdataupdate={setdataupdate} /> :null}
        <div className={` ${states==0?"lg:w-[65%] w-[100%] ":" w-[100%] "}  flex flex-col  h-[100%] ml-auto   `}>
 

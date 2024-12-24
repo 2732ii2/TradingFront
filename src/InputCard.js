@@ -313,7 +313,7 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
     <Card
       title={<h2 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>Place Order</h2>}
       // style={{ width: "30%", height: "auto" }}
-      className=" lg:w-[30%] w-[100%] h-[auto] -mt-[20px]"
+      className=" lg:w-[30%] w-[100%] h-[auto] "
     >
       <div style={{ marginBottom: "5px" }}>
         <label htmlFor="quantity" style={{ display: "block", marginBottom: "5px" }}>
