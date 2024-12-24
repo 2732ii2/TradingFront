@@ -234,7 +234,8 @@ import axios from "axios";
 import { io } from "socket.io-client";
 
 const { Option } = Select;
-const url=`https://tradingbackend-ebt1.onrender.com/`;
+// const url=`https://tradingbackend-ebt1.onrender.com/`;
+const url=`http://localhost:1200/`;
 const socket = io(url);
 
 export default function PlaceOrder({dataupdate,setdataupdate}) {
@@ -248,6 +249,7 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
     durationValue: "",
     durationUnit: "minutes",
     dateTime: "",
+    name:"",
   });
 
   const handleChange = (field, value) => {
@@ -259,6 +261,7 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
 
   const handlePlaceOrder = async() => {
     console.log("Form Data:", formData);
+    socket.emit("room_id",{name:formData.name})
     // http://localhost:1200
     try{
       const resp=await axios.post(`${url}save`,formData);
@@ -268,7 +271,7 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
       console.log(e);
     }
     // setdataupdate(!dataupdate);
-   socket.emit("recieveDataBack",{message:"recievedataback"})
+   socket.emit("recieveDataBack",{message:"recievedataback" })
    setFormData({
     symbol: "BTC-USDT",
     side: "buy",
@@ -307,6 +310,19 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
       // style={{ width: "30%", height: "auto" }}
       className=" lg:w-[30%] w-[100%] h-[auto] -mt-[20px]"
     >
+      <div style={{ marginBottom: "5px" }}>
+        <label htmlFor="quantity" style={{ display: "block", marginBottom: "5px" }}>
+          Name 
+        </label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="Name of the user"
+          step=""
+          value={formData.name}
+          onChange={(e) => handleChange("name", e.target.value)}
+        />
+      </div>
       {/* Symbol */}
       <div style={{ marginBottom: "5px" }}>
         <label htmlFor="symbol" style={{ display: "block", marginBottom: "5px" }}>
@@ -423,8 +439,9 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
         onClick={handlePlaceOrder}
         className="active:skew-y-3"
       >
-        Place Order
+        Proceed
       </button>
     </Card>
   );
 }
+

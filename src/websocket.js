@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-export const WebSocketDemo = () => {
+export const WebSocketDemo = ({states,setstates}) => {
   //Public API that will echo messages sent to it back to the client
   const [socketUrl, setSocketUrl] = useState('wss://stream.binance.com:9443/ws/btcusdt@ticker');
   const [messageHistory, setMessageHistory] = useState([]);
@@ -33,9 +33,9 @@ export const WebSocketDemo = () => {
   }[readyState];
 
   return (
-    <div className="  w-[100%] bg-[rgba(0,0,0,.05)] h-[40%] flex flex-col px-[30px] py-[20px] gap-[10px] ">
+    <div className="  w-[100%] bg-[rgba(0,0,0,.05)] min-h-[30%] flex flex-col px-[30px] py-[20px] gap-[10px] ">
 
-    <h1 className=" tracking-wider  mono !font-medium  text-[18px] " >Trade Dashboard</h1>
+{states==0?    <h1 className=" tracking-wider  mono !font-medium  text-[18px] " >Trade Dashboard</h1>:  <h1 className=" tracking-wider  mono !font-medium  text-[18px] " >Settlement Dashboard</h1>}
       
      <div className="w-[100%] bg-white h-[70%] text-black rounded-[20px] flex items-center  justify-between px-[40px]">
      <div className=" flex flex-col gap-[20px]">
