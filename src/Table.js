@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {AddElement,Setmsg} from "./Redux/action";
 
 // const url=`https://tradingbackend-ebt1.onrender.com/`;
-const url=`http://localhost:1200/`;
-// http://localhost:1200/
+// const url=`http://localhost:1200/`;
+const url=`https://newtradingapi.onrender.com/`;
 const socket = io(`${url}`);
 
 function extractDateTime(isoString) {

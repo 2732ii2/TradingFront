@@ -8,8 +8,8 @@ import {Provider} from "react-redux";
 import { io } from "socket.io-client";
 import store from './Redux/store';
 import Notification from './Notification';
-const url=`http://localhost:1200/`;
-
+// const url=`http://localhost:1200/`;
+const url=`https://newtradingapi.onrender.com/`;
 const socket = io(`${url}`);
 const App=()=>{
   const [states,setstates]=useState(0);
@@ -17,7 +17,6 @@ const App=()=>{
   const [data,setdata]=useState([]);
   console.log("=> arr ",data);
   // const url=`https://tradingbackend-ebt1.onrender.com/`;
-  const url=`http://localhost:1200/`;
   const getData=async()=>{
    try{
      const resp= await axios.get(`${url}getData`);

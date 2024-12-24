@@ -235,7 +235,8 @@ import { io } from "socket.io-client";
 
 const { Option } = Select;
 // const url=`https://tradingbackend-ebt1.onrender.com/`;
-const url=`http://localhost:1200/`;
+// const url=`http://localhost:1200/`;
+const url=`https://newtradingapi.onrender.com/`;
 const socket = io(url);
 
 export default function PlaceOrder({dataupdate,setdataupdate}) {
