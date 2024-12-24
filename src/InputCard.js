@@ -262,6 +262,10 @@ export default function PlaceOrder({dataupdate,setdataupdate}) {
   const handlePlaceOrder = async() => {
     console.log("Form Data:", formData);
     socket.emit("room_id",{name:formData.name})
+  
+
+    localStorage.setItem("room",JSON.stringify({name:formData.name}));
+
     // http://localhost:1200
     try{
       const resp=await axios.post(`${url}save`,formData);

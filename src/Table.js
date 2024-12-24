@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { Space, Table, Tag } from 'antd';
 import { io } from "socket.io-client";
-
+import { useDispatch, useSelector } from 'react-redux';
+import {AddElement,Setmsg} from "./Redux/action";
 
 // const url=`https://tradingbackend-ebt1.onrender.com/`;
 const url=`http://localhost:1200/`;
@@ -104,7 +105,7 @@ updatedAt:""
 
 ];
 
-function suggestionExtracter(arr,setmsg,msg){
+function suggestionExtracter(arr,dispatch,msg){
   var obj={};
 console.log("arr",arr);
 for(var i=0;i<arr.length;i++){
@@ -134,21 +135,22 @@ for(var j=0;j<Object.keys(obj).length;j++)
   console.log(l);
   
   var first= l[0];
-  console.log("first",l[0]);
+  // console.log("first",l[0]);
   for(var k=0;k<l.length;k++){
-    console.log("---",first,l[k])
+    // console.log("---",first,l[k])
     if(first.side!=l[k].side)
-    {console.log("=>",l[k],first);
+    {
+      console.log("=>",l[k],first);
       // 🤝 Choose Ashad or Anas for your settlement - both offering identical pricing! ⚖️ 💫
       if(!msg)
-      setmsg(`🤝 Choose ${l[k].name} or ${first.name} for your settlement - both offering identical pricing! ⚖️ 💫`)
+        dispatch(Setmsg(`🤝 Choose ${l[k].name} or ${first.name} for your settlement - both offering identical pricing! ⚖️ 💫`))
     break;
   }
   }
 
 }
 }
-function reverseArray(arr,name,setmsg,msg) {
+function reverseArray(arr,name,dispatch,msg) {
     let reversed = [];
     for (let i = arr?.length - 1; i >= 0; i--) {
       reversed.push(arr[i]);
@@ -160,7 +162,7 @@ function reverseArray(arr,name,setmsg,msg) {
           return e;
         }
       })
-      suggestionExtracter(reversed,setmsg,msg);
+      suggestionExtracter(reversed,dispatch,msg);
       //  we are going to write a logic for making the sugeestion 
        
     }
@@ -179,8 +181,14 @@ const TableComp = (props) => {
     // console.log("=> ",maindata?.data?.reverse());
     // let array = [1, 2, 3, 4, 5];
   //
-  var {maindata,name,msg,setmsg}=props;
- 
+  const dispatch=useDispatch();
+  const select=useSelector(state=>state);
+  console.log("select",select);
+  
+
+
+  
+  var {maindata,name}=props;
   const [dataArr,setDataArr]=useState([]);
 // console.log(dataArr)
   useEffect(() => {
@@ -207,7 +215,15 @@ const TableComp = (props) => {
       title: 'Settlement',
       dataIndex: '-',
       key: '',
-      render: (text) =><button className="border-[1px] border-black px-2 py-1 !transition-all  hover:bg-[black] hover:text-white ">select</button>
+      render: (text,record) =><button  onClick={()=>{ 
+      //  if(select?.length<=2)
+       dispatch(AddElement(record))
+         // setSettlementArr((prev)=>{
+        console.log("-----",Object.values((select?.settlementArr?.map(e=>e.name))).includes(record?.name));
+        // ${Object.values((settlementArr?.map(e=>e.name)))?.includes(record?.name)==true ? "bg-[black] text-white" :""  }
+        // return [...prev,record]
+      // }) 
+    }} className={`border-[1px] border-black px-2 py-1 !transition-all  hover:bg-[black] hover:text-white ${Object.values((select?.settlementArr?.map(e=>e.name))).includes(record?.name)?"bg-[black] text-white":""} `}>select</button>
     })
     if( c==0)
     columns.unshift({
@@ -219,15 +235,66 @@ const TableComp = (props) => {
   }
     return (
     
+        <div className="relative">
         <Table 
           columns={columns} 
-          dataSource={ !dataArr.length?reverseArray(maindata?.data,name,setmsg,msg):reverseArray(dataArr,name,setmsg,msg)} 
+          dataSource={ !dataArr.length?reverseArray(maindata?.data,name,dispatch,select.msg):reverseArray(dataArr,name,dispatch,select.msg)} 
           pagination={{ 
             pageSize: 4,  // Number of rows per page
           //   showSizeChanger: true, // Allow changing the page size
           //   pageSizeOptions: ['3', '5', '10'], // Page size options
           }} 
         />
+       {(name=="settement" && (select?.settlementArr?.length==2 ))&& <button onClick={()=>{
+        var a=(select?.settlementArr[0]);
+        var b=(select?.settlementArr[1]);
+        console.log("ab",a,b)
+        // if((a.quantity)<=(b.quantity)){
+        //   console.log("messages has been send it");
+        //   socket.emit("notification", {room :a.name ,msg :"your stocks has solled out"})
+        // }
+
+
+
+        if(a.quantity<b.quantity){
+          if(a.side=="sell")
+          { 
+          socket.emit("notification", {room :a.name ,msg :"your"+a.quantity+`${a.side=="sell"?"sold":""}`})
+          socket.emit("notification", {room :b.name ,msg :" you have bought"+a.quantity+"stocks" + "and left with"+b.quantity-a.quantity+"stock"})
+
+          }
+          else{
+          socket.emit("notification", {room :a.name ,msg :"you have bough"+a.quantity+"stocks"})
+          socket.emit("notification", {room :b.name ,msg :" your "+a.quantity+"stocks" + "sold out and left with"+b.quantity-a.quantity+"stock"})
+
+          }
+        }
+        else if(a.quantity>b.quantity){
+          if(a.side=="sell")
+          { 
+          socket.emit("notification", {room :a.name ,msg :"your"+b.quantity+"stocks was sold out and left with "+a.quantity-b.quantity})
+          socket.emit("notification", {room :b.name ,msg :" you have bought"+b.quantity+"stocks"})
+          }
+          else{
+  
+          socket.emit("notification", {room :a.name ,msg :"a message "+"you have bought"+b.quantity+"stocks and left with "+a.quantity-b.quantity})
+          socket.emit("notification", {room :b.name ,msg :" your"+b.quantity+"stocks" +"was sold "})
+          }
+        }
+        else{
+          if(a.side=="sell")
+          { 
+            socket.emit("notification", {room :a.name ,msg :` you have stocks was sold out`})
+            socket.emit("notification", {room :b.name ,msg :` you have bought all the stocks `})
+          }
+          else{
+       
+            socket.emit("notification", {room :a.name ,msg :` you have bought all the stocks `})
+            socket.emit("notification", {room :b.name ,msg :` you have stocks was sold out`})
+          }
+        }
+       }} className="absolute  bg-[blue] rounded-[4px] text-white  px-3 py-[4px] -top-[45px] right-[20px]"> Settle Trades</button>}
+        </div>
       );
 }
 

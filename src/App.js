@@ -4,6 +4,13 @@ import { WebSocketDemo } from './websocket';
 import PlaceOrder from './InputCard';
 import TableComp from './Table';
 import axios from "axios";
+import {Provider} from "react-redux";
+import { io } from "socket.io-client";
+import store from './Redux/store';
+import Notification from './Notification';
+const url=`http://localhost:1200/`;
+
+const socket = io(`${url}`);
 const App=()=>{
   const [states,setstates]=useState(0);
   console.log(states);
@@ -21,6 +28,18 @@ const App=()=>{
     console.log(e);
    }
   }
+  const [notify,setnotify]=useState();
+  useEffect(() => {
+    socket.emit("room_id",{name: ((JSON.parse(localStorage.getItem("room")))?.name)})
+ 
+
+    socket.on("notify",(data)=>{
+      console.log(data);
+      setnotify(data.msg);
+    })
+    //  reversedArray= reverseArray(dataArr);
+    console.log("table updated");
+  }, [socket]);
   const [dataupdate,setdataupdate]=useState([]);
   useEffect(()=>{
     // if(!dataupdate.length)
@@ -30,15 +49,23 @@ const App=()=>{
   },[])
   const [msg,setmsg]=useState("");
   console.log(msg);
-
-  return <div className={` flex w-[100%] relative h-[100vh] bg-[rgba(255,255,255,.3)] ${states==0?"lg:!overflow-hidden":""}  flex flex-col `}>
+  const [hide,sethide]=useState(true);
+  return(  <Provider store={store}>
+  <div className={` flex w-[100%] relative h-[100vh] bg-[rgba(255,255,255,.3)] ${states==0?"lg:!overflow-hidden":""}  flex flex-col `}>
     <Header  states={states} setstates={setstates} />
+   {notify? <p className="bg-[lightgreen] px-3py-2">{notify}</p>:null}
     <WebSocketDemo states={states} setstates={setstates}  />
     <div className={` bg-[rgba(0,0,0,.05)] w-[100%] ${states==0?"h-[90%]":"h-[auto]"} flex lg:flex-row flex-col justify-start items-start px-[40px] `}>
      {states==0?  <PlaceOrder  dataupdate={dataupdate} setdataupdate={setdataupdate} /> :null}
        <div className={` ${states==0?"lg:w-[65%] w-[100%] ":" w-[100%] "}  flex flex-col  h-[100%] ml-auto   `}>
-      {(msg && states==1) ?<p className="w-[100%] text-[16px] my-1 text-end  p-1 text-[red]">{msg}</p>:null}
-     {states!=0?  <div className="flex  text-[16px] tracking-wider gap-[10px] flex-col ">
+
+{/* NOTIFICATION */}
+
+    <Notification  states={states} hide={hide} sethide={sethide} />
+
+
+
+     {states!=0?  <div className="flex  text-[16px] mt-[10px] tracking-wider gap-[10px] flex-col ">
         Settlement Orders
        <TableComp maindata={data} msg={msg} setmsg={setmsg}  name="settement"/>
        </div>:null}
@@ -54,6 +81,7 @@ const App=()=>{
        </div>
     </div>
   </div>
+  </Provider>)
 }
 
 export default App;
