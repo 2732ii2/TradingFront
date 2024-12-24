@@ -257,31 +257,36 @@ const TableComp = (props) => {
 
 
         if(a.quantity<b.quantity){
+          console.log("---1");
           if(a.side=="sell")
           { 
-          socket.emit("notification", {room :a.name ,msg :"your"+a.quantity+`${a.side=="sell"?"sold":""}`})
-          socket.emit("notification", {room :b.name ,msg :" you have bought"+a.quantity+"stocks" + "and left with"+b.quantity-a.quantity+"stock"})
+          socket.emit("notification", {room :a.name ,msg :"your "+a.quantity+`${a.side=="sell"?" stocks was sold " :""}`})
+          socket.emit("notification", {room :b.name ,msg :" you have bought "+a.quantity+" stocks" + " and left with "+parseInt(b.quantity-a.quantity)+" stock"})
 
           }
           else{
-          socket.emit("notification", {room :a.name ,msg :"you have bough"+a.quantity+"stocks"})
-          socket.emit("notification", {room :b.name ,msg :" your "+a.quantity+"stocks" + "sold out and left with"+b.quantity-a.quantity+"stock"})
+          socket.emit("notification", {room :a.name ,msg :"you have bought "+a.quantity+" stocks"})
+          socket.emit("notification", {room :b.name ,msg :" your "+a.quantity+" stocks" + " sold out and left with "+parseInt(b.quantity-a.quantity)+" stock"})
 
           }
         }
         else if(a.quantity>b.quantity){
+          console.log("---2");
+
           if(a.side=="sell")
           { 
-          socket.emit("notification", {room :a.name ,msg :"your"+b.quantity+"stocks was sold out and left with "+a.quantity-b.quantity})
-          socket.emit("notification", {room :b.name ,msg :" you have bought"+b.quantity+"stocks"})
+          socket.emit("notification", {room :a.name ,msg :"your "+b.quantity+" stocks was sold out and left with "+parseInt(a.quantity-b.quantity)})
+          socket.emit("notification", {room :b.name ,msg :" you have bought "+b.quantity+" stocks"})
           }
           else{
   
-          socket.emit("notification", {room :a.name ,msg :"a message "+"you have bought"+b.quantity+"stocks and left with "+a.quantity-b.quantity})
-          socket.emit("notification", {room :b.name ,msg :" your"+b.quantity+"stocks" +"was sold "})
+          socket.emit("notification", {room :a.name ,msg :" you have bought "+b.quantity+"stocks and left with "+parseInt(a.quantity-b.quantity)})
+          socket.emit("notification", {room :b.name ,msg :" your "+b.quantity+ " stocks " +" was sold "})
           }
         }
         else{
+          console.log("---3");
+
           if(a.side=="sell")
           { 
             socket.emit("notification", {room :a.name ,msg :` you have stocks was sold out`})

@@ -6,7 +6,7 @@ const Notification=({states,hide,sethide})=>{
    const{msg}=select;
     return <div>
 
-{((msg && hide ) && states==1) ?<p className="w-[100%] text-[16px] relative mb-2 text-end  px-2 pr-[40px] py-5 bg-[red] text-white">
+{((msg && hide ) && states==1) ?<p className="w-[100%] text-[16px] relative mb-2 text-end  px-5 pr-[40px] py-5 bg-[red] text-white">
         {msg}
         <div onClick={()=>{
           alert("done")
